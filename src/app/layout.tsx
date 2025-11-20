@@ -5,7 +5,6 @@ import { cn } from "@/lib/utils";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import { FirebaseClientProvider } from "@/firebase/client-provider";
-import { Analytics } from "@vercel/analytics/next"
 
 const inter = Inter({
   subsets: ['latin'],
@@ -16,60 +15,31 @@ const inter = Inter({
 
 
 export const metadata: Metadata = {
-  title: {
-    default: "Sudha Realty",
-    template: "%s | Sudha Realty",
-  },
-  description:
-    "Your trusted real estate partner for personalized property solutions. Explore curated listings, book consultations, and find your dream property with Sudha Realty.",
-  keywords: [
-    "real estate",
-    "property listings",
-    "buy property",
-    "sell property",
-    "Sudha Realty",
-    "real estate consultation",
-    "homes for sale",
-    "apartments",
-    "flats in India",
-    "flats in Hyderabad",
-  ],
-  authors: [{ name: "Sudha Realty", url: "https://sudharealty.in" }],
-  creator: "Sudha Realty",
-  publisher: "Sudha Realty",
+  title: "Sudha Realty - Your Trusted Real Estate Partner in Hyderabad",
+  description: "Explore curated properties, community listings, and get expert consultation for your real estate needs in Hyderabad. Your trusted partner in finding the perfect property.",
   openGraph: {
-    title: "Sudha Realty - Your Trusted Real Estate Partner",
-    description:
-      "Your trusted real estate partner for personalized property solutions. Explore curated listings, book consultations, and find your dream property with Sudha Realty.",
-    url: "https://sudharealty.in",
-    siteName: "Sudha Realty",
+    title: 'Sudha Realty - Your Trusted Real Estate Partner',
+    description: 'Explore curated properties, community listings, and get expert consultation for your real estate needs in Hyderabad.',
+    url: 'https://www.sudharealty.in',
+    siteName: 'Sudha Realty',
     images: [
       {
-        url: "/plainlogo.jpg",
+        url: 'https://www.sudharealty.in/plainlogo.jpg', 
         width: 1200,
         height: 630,
-        alt: "Sudha Realty",
+        alt: 'Sudha Realty Logo',
       },
     ],
-    locale: "en_IN",
-    type: "website",
+    locale: 'en_IN',
+    type: 'website',
   },
- 
-  icons: {
-    icon: "/favicon.ico",
-   
+   twitter: {
+    card: 'summary_large_image',
+    title: 'Sudha Realty - Your Trusted Real Estate Partner',
+    description: 'Explore curated properties, community listings, and get expert consultation for your real estate needs in Hyderabad.',
+    images: ['https://www.sudharealty.in/plainlogo.jpg'],
   },
-  
-  metadataBase: new URL("https://sudharealty.in"),
-  alternates: {
-    canonical: "https://sudharealty.in",
-    languages: {
-      "en-IN": "https://sudharealty.in/en-IN",
-    },
-  },
-  category: "Real Estate",
 };
-
 
 export default function RootLayout({
   children,
@@ -86,7 +56,6 @@ export default function RootLayout({
       >
         <FirebaseClientProvider>
           {children}
-           <Analytics />
           <Toaster />
         </FirebaseClientProvider>
       </body>

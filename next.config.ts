@@ -31,7 +31,7 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: 'https',
-        hostname: 'maephimproperty.com',
+        hostname: 'drive.google.com',
         port: '',
         pathname: '/**',
       }

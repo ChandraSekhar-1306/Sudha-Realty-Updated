@@ -1,0 +1,130 @@
+{
+  "placeholderImages": [
+    {
+      "id": "hero-image",
+      "description": "A modern, luxurious house exterior at dusk.",
+      "imageUrl": "https://images.unsplash.com/photo-1628745277862-bc0b2d68c50c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxtb2Rlcm4lMjBob3VzZXxlbnwwfHx8fDE3NjA4MzYyNjZ8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "modern house"
+    },
+    {
+      "id": "hero-image-2",
+      "description": "A stunning modern house with large windows and a clean design.",
+      "imageUrl": "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      "imageHint": "modern house exterior"
+    },
+    {
+      "id": "qr-code",
+      "description": "A sample QR code for UPI payments.",
+      "imageUrl": "https://images.unsplash.com/photo-1559131397-f94da358f7ca?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxxciUyMGNvZGV8ZW58MHx8fHwxNzYwODUzNTIyfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "qr code"
+    },
+    {
+      "id": "property-1",
+      "description": "A beautiful modern family home with a garden.",
+      "imageUrl": "https://images.unsplash.com/photo-1600210491892-03d54c0aaf87?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxtb2Rlcm4lMjBob21lfGVufDB8fHx8MTc2MDc2OTAxMnww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "modern home"
+    },
+    {
+      "id": "property-2",
+      "description": "A stylish apartment with a city view from the balcony.",
+      "imageUrl": "https://images.unsplash.com/photo-1524549207884-e7d1130ae2f3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxhcGFydG1lbnQlMjBiYWxjb255fGVufDB8fHx8MTc2MDg1NjIzOXww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "apartment balcony"
+    },
+    {
+      "id": "property-3",
+      "description": "A luxurious villa with a private pool.",
+      "imageUrl": "https://images.unsplash.com/photo-1674796930386-ea3ed55beece?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHx2aWxsYSUyMHBvb2x8ZW58MHx8fHwxNzYwODQxMTAzfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "villa pool"
+    },
+    {
+      "id": "property-4",
+      "description": "A cozy suburban house with a front lawn.",
+      "imageUrl": "https://images.unsplash.com/photo-1510627489930-0c1b0bfb6785?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8c3VidXJiYW4lMjBob3VzZXxlbnwwfHx8fDE3NjA3MzE3ODl8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "suburban house"
+    },
+    {
+      "id": "property-5",
+      "description": "An urban loft apartment with large windows.",
+      "imageUrl": "https://images.unsplash.com/photo-1617817643768-8855fc457e3a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxsb2Z0JTIwYXBhcnRtZW50fGVufDB8fHx8MTc2MDc0NDI0NHww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "loft apartment"
+    },
+    {
+      "id": "property-6",
+      "description": "A spacious mansion in the countryside.",
+      "imageUrl": "https://images.unsplash.com/photo-1760627593331-01e2edd90c73?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxjb3VudHJ5c2lkZSUyMG1hbnNpb258ZW58MHx8fHwxNzYwODU2MjM5fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "countryside mansion"
+    },
+    {
+      "id": "plot-1",
+      "description": "An empty residential plot with markings.",
+      "imageUrl": "https://images.unsplash.com/photo-1586777144620-4869a8bc0f84?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxlbXB0eSUyMHBsb3R8ZW58MHx8fHwxNzYwODU2MjM5fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "empty plot"
+    },
+    {
+      "id": "plot-2",
+      "description": "An open plot of land in a developing area.",
+      "imageUrl": "https://images.unsplash.com/photo-1655367382408-59b9b8a11e92?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxsYW5kJTIwcGxvdHxlbnwwfHx8fDE3NjA4MjEzMjN8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "land plot"
+    },
+    {
+      "id": "plot-3",
+      "description": "Aerial view of a residential plot.",
+      "imageUrl": "https://images.unsplash.com/photo-1711110065992-6d6aff9ae35c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxhZXJpYWwlMjBwbG90fGVufDB8fHx8MTc2MDg1NjIzOXww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "aerial plot"
+    },
+    {
+      "id": "farm-1",
+      "description": "A lush green farmland with trees.",
+      "imageUrl": "https://images.unsplash.com/photo-1716404249295-3ac5f609d546?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxncmVlbiUyMGZhcm1sYW5kfGVufDB8fHx8MTc2MDg1NjIzOXww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "green farmland"
+    },
+    {
+      "id": "farm-2",
+      "description": "A tractor on a large piece of agricultural land.",
+      "imageUrl": "https://images.unsplash.com/photo-1640397745659-fb75b73d9224?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxmYXJtbGFuZCUyMHRyYWN0b3J8ZW58MHx8fHwxNzYwODU2MjM5fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "farmland tractor"
+    },
+    {
+      "id": "farm-3",
+      "description": "An irrigation system in a field.",
+      "imageUrl": "https://images.unsplash.com/photo-1655048425771-daa9087aaa00?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxmYXJtJTIwaXJyaWdhdGlvbnxlbnwwfHx8fDE3NjA4MzI2NDZ8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "farm irrigation"
+    },
+    {
+      "id": "community-1",
+      "description": "A well-lit room for rent by owner.",
+      "imageUrl": "https://images.unsplash.com/photo-1630699144919-681cf308ae82?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxhcGFydG1lbnQlMjByb29tfGVufDB8fHx8MTc2MDg1NjIzOXww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "apartment room"
+    },
+    {
+      "id": "community-2",
+      "description": "A small house available for direct lease.",
+      "imageUrl": "https://images.unsplash.com/photo-1572120360610-d971b9d7767c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxzbWFsbCUyMGhvdXNlfGVufDB8fHx8MTc2MDgwNzc3NHww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "small house"
+    },
+    {
+      "id": "community-3",
+      "description": "A furnished studio apartment.",
+      "imageUrl": "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxzdHVkaW8lMjBhcGFydG1lbnR8ZW58MHx8fHwxNzYwODU2MjM5fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "studio apartment"
+    },
+    {
+      "id": "community-4",
+      "description": "A duplex with a nice view.",
+      "imageUrl": "https://images.unsplash.com/photo-1664997096223-d62e85641398?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8bW9kZXJuJTIwZHVwbGV4fGVufDB8fHx8MTc2MDg1NjIzOXww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "modern duplex"
+    },
+    {
+      "id": "agent-1",
+      "description": "A friendly and professional real estate agent.",
+      "imageUrl": "https://images.unsplash.com/photo-1573165850883-9b0e18c44bd2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxwcm9mZXNzaW9uYWwlMjB3b21hbnxlbnwwfHx8fDE3NjA4MzM2MTJ8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "professional woman"
+    },
+    {
+      "id": "agent-2",
+      "description": "An experienced real estate consultant.",
+      "imageUrl": "https://images.unsplash.com/flagged/photo-1553642618-de0381320ff3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHxwcm9mZXNzaW9uYWwlMjBtYW58ZW58MHx8fHwxNzYwODQzNDcyfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "professional man"
+    }
+  ]
+}

@@ -21,12 +21,12 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { MoreHorizontal, CheckCircle, XCircle, Loader2, Copy, ExternalLink } from "lucide-react";
 import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuTrigger,
-  } from "@/components/ui/dropdown-menu";
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import {
   Dialog,
   DialogContent,
@@ -56,7 +56,7 @@ export default function AdminConsultationsPage() {
   const { toast } = useToast();
   const [updatingId, setUpdatingId] = useState<string | null>(null);
   const [emailDialogContent, setEmailDialogContent] = useState<EmailDialogContent | null>(null);
-  
+
   const requestsQuery = useMemoFirebase(() => {
     if (!firestore) return null;
     return query(collection(firestore, "consultation_requests"), orderBy("createdAt", "desc"));
@@ -69,7 +69,7 @@ export default function AdminConsultationsPage() {
       toast({ title: "Database not available", variant: "destructive" });
       return;
     }
-    
+
     setUpdatingId(request.id);
 
     const requestRef = doc(firestore, 'consultation_requests', request.id);
@@ -97,7 +97,7 @@ export default function AdminConsultationsPage() {
     // Prepare email content and open dialog
     let emailSubject = '';
     let emailBody = '';
-    const schedulingLink = "https://cal.com/jayendrat/property-consultation"; 
+    const schedulingLink = "https://cal.com/jayendrat/property-consultation";
 
     if (newStatus === 'approved') {
       emailSubject = 'Your Consultation Request has been Approved.';
@@ -112,7 +112,7 @@ export default function AdminConsultationsPage() {
       emailSubject,
       emailBody
     });
-    
+
     toast({
       title: `Request ${newStatus}`,
       description: `The request status has been updated. Please send the email.`,
@@ -130,11 +130,19 @@ export default function AdminConsultationsPage() {
   return (
     <>
       <Card>
-        <CardHeader>
-          <CardTitle className="font-headline">Manage Consultation Requests</CardTitle>
-          <CardDescription>
-            View and respond to personalized consultation requests from potential clients.
-          </CardDescription>
+        <CardHeader className="flex flex-row items-start justify-between">
+          <div>
+            <CardTitle className="font-headline">Manage Consultation Requests</CardTitle>
+            <CardDescription>
+              View and respond to personalized consultation requests from potential clients.
+            </CardDescription>
+          </div>
+          <Button asChild variant="outline">
+            <a href="https://app.cal.com/event-types" target="_blank" rel="noopener noreferrer">
+              View on Cal.com
+              <ExternalLink className="ml-2 h-4 w-4" />
+            </a>
+          </Button>
         </CardHeader>
         <CardContent>
           <Table>
@@ -163,49 +171,49 @@ export default function AdminConsultationsPage() {
               )}
               {!isLoading && !error && consultationRequests && consultationRequests.length > 0 ? (
                 consultationRequests.map((req) => (
-                <TableRow key={req.id}>
-                  <TableCell className="font-medium">{req.name}</TableCell>
-                  <TableCell>
+                  <TableRow key={req.id}>
+                    <TableCell className="font-medium">{req.name}</TableCell>
+                    <TableCell>
                       <div>{req.email}</div>
                       <div className="text-muted-foreground text-xs">{req.phone}</div>
-                  </TableCell>
-                  <TableCell>{req.transactionId}</TableCell>
-                  <TableCell>
-                    <Badge 
-                      variant={req.status === 'approved' ? 'default' : req.status === 'pending' ? 'secondary' : 'destructive'}
-                      className="capitalize"
-                    >
-                      {req.status}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>{req.createdAt ? format(req.createdAt.toDate(), 'PPP') : 'N/A'}</TableCell>
-                  <TableCell>
-                  {updatingId === req.id ? (
-                      <Loader2 className="h-4 w-4 animate-spin" />
-                    ) : req.status === 'pending' ? (
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button aria-haspopup="true" size="icon" variant="ghost">
-                            <MoreHorizontal className="h-4 w-4" />
-                            <span className="sr-only">Toggle menu</span>
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                          <DropdownMenuItem onClick={() => handleUpdateStatus(req, 'approved')}>
-                            <CheckCircle className="mr-2 h-4 w-4 text-green-500"/>Approve
-                          </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => handleUpdateStatus(req, 'rejected')} className="text-destructive">
-                            <XCircle className="mr-2 h-4 w-4"/>Reject
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    ) : (
-                      <span className="text-xs text-muted-foreground">Action taken</span>
-                    )}
-                  </TableCell>
-                </TableRow>
-              ))
+                    </TableCell>
+                    <TableCell>{req.transactionId}</TableCell>
+                    <TableCell>
+                      <Badge
+                        variant={req.status === 'approved' ? 'default' : req.status === 'pending' ? 'secondary' : 'destructive'}
+                        className="capitalize"
+                      >
+                        {req.status}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>{req.createdAt ? format(req.createdAt.toDate(), 'PPP') : 'N/A'}</TableCell>
+                    <TableCell>
+                      {updatingId === req.id ? (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                      ) : req.status === 'pending' ? (
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button aria-haspopup="true" size="icon" variant="ghost">
+                              <MoreHorizontal className="h-4 w-4" />
+                              <span className="sr-only">Toggle menu</span>
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                            <DropdownMenuItem onClick={() => handleUpdateStatus(req, 'approved')}>
+                              <CheckCircle className="mr-2 h-4 w-4 text-green-500" />Approve
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => handleUpdateStatus(req, 'rejected')} className="text-destructive">
+                              <XCircle className="mr-2 h-4 w-4" />Reject
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      ) : (
+                        <span className="text-xs text-muted-foreground">Action taken</span>
+                      )}
+                    </TableCell>
+                  </TableRow>
+                ))
               ) : (
                 !isLoading && (
                   <TableRow>
@@ -219,7 +227,7 @@ export default function AdminConsultationsPage() {
           </Table>
         </CardContent>
       </Card>
-      
+
       <Dialog open={!!emailDialogContent} onOpenChange={(isOpen) => !isOpen && setEmailDialogContent(null)}>
         <DialogContent className="sm:max-w-lg">
           <DialogHeader>
@@ -234,7 +242,7 @@ export default function AdminConsultationsPage() {
                 <Label htmlFor="zoho-link">Zoho Mail Link</Label>
                 <Button asChild variant="outline" className="w-full justify-start">
                   <a href="https://mail.zoho.in/zm/#compose" target="_blank" rel="noopener noreferrer">
-                    Open Zoho Mail <ExternalLink className="ml-auto h-4 w-4"/>
+                    Open Zoho Mail <ExternalLink className="ml-auto h-4 w-4" />
                   </a>
                 </Button>
               </div>
@@ -247,7 +255,7 @@ export default function AdminConsultationsPage() {
                   </Button>
                 </div>
               </div>
-               <div className="space-y-2">
+              <div className="space-y-2">
                 <Label htmlFor="email-subject">Email Subject</Label>
                 <div className="flex items-center gap-2">
                   <Input id="email-subject" value={emailDialogContent.emailSubject} readOnly />
@@ -259,8 +267,8 @@ export default function AdminConsultationsPage() {
               <div className="space-y-2">
                 <Label htmlFor="email-body">Email Body</Label>
                 <div className="flex items-start gap-2">
-                   <Textarea id="email-body" value={emailDialogContent.emailBody} readOnly className="h-48 resize-none"/>
-                   <Button variant="outline" size="icon" onClick={() => copyToClipboard(emailDialogContent.emailBody, "Body")}>
+                  <Textarea id="email-body" value={emailDialogContent.emailBody} readOnly className="h-48 resize-none" />
+                  <Button variant="outline" size="icon" onClick={() => copyToClipboard(emailDialogContent.emailBody, "Body")}>
                     <Copy className="h-4 w-4" />
                   </Button>
                 </div>

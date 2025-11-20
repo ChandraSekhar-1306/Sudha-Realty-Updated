@@ -1,7 +1,7 @@
 
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import {
   Card,
@@ -290,7 +290,7 @@ const InsightsSidebar = () => (
     </div>
 )
 
-export default function PropertiesPage() {
+function PropertiesPageContent() {
     const searchParams = useSearchParams();
     const { properties: allProperties, isLoading, error } = useProperties();
     
@@ -452,3 +452,11 @@ export default function PropertiesPage() {
   );
 }
 
+
+export default function PropertiesPage() {
+    return (
+        <Suspense fallback={<div className="flex min-h-screen items-center justify-center"><Loader2 className="h-8 w-8 animate-spin" /></div>}>
+            <PropertiesPageContent />
+        </Suspense>
+    )
+}

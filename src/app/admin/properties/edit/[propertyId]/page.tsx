@@ -5,7 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 import { useRouter, useParams, notFound } from 'next/navigation';
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, Suspense } from 'react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -59,7 +59,7 @@ const formSchema = z.object({
   saleType: z.enum(['Fresh Sales', 'Resales']).optional().nullable(),
 });
 
-export default function EditPropertyPage() {
+function EditPropertyForm() {
   const { toast } = useToast();
   const router = useRouter();
   const params = useParams();
@@ -441,4 +441,12 @@ export default function EditPropertyPage() {
       </CardContent>
     </Card>
   );
+}
+
+export default function EditPropertyPage() {
+    return (
+        <Suspense fallback={<div className="flex min-h-screen items-center justify-center"><Loader2 className="h-8 w-8 animate-spin" /></div>}>
+            <EditPropertyForm />
+        </Suspense>
+    )
 }

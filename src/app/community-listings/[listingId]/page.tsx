@@ -1,7 +1,7 @@
 
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, Suspense } from 'react';
 import { useParams, useRouter, notFound } from 'next/navigation';
 import {
   Carousel,
@@ -77,7 +77,7 @@ const DetailItem = ({ label, value, icon: Icon }: { label: string; value: string
 );
 
 
-export default function CommunityListingDetailPage() {
+function CommunityListingDetail() {
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const params = useParams();
@@ -268,4 +268,12 @@ export default function CommunityListingDetailPage() {
       </div>
     </div>
   );
+}
+
+export default function CommunityListingDetailPage() {
+    return (
+        <Suspense fallback={<div className="flex justify-center items-center h-screen"><Loader2 className="h-12 w-12 animate-spin text-primary" /></div>}>
+            <CommunityListingDetail />
+        </Suspense>
+    )
 }

@@ -5,7 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 import { useRouter, useParams, notFound } from 'next/navigation';
-import { useEffect, useMemo, Suspense } from 'react';
+import React, { useEffect, useMemo, Suspense } from 'react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -37,7 +37,7 @@ import {
 import { Checkbox } from '@/components/ui/checkbox';
 import { useFirestore, useDoc, useMemoFirebase, errorEmitter, FirestorePermissionError } from '@/firebase';
 import { doc, updateDoc } from 'firebase/firestore';
-import { ArrowLeft, Loader2 } from 'lucide-react';
+import { ArrowLeft, Loader2, Wand2 } from 'lucide-react';
 import Link from 'next/link';
 import type { Property } from '@/lib/types';
 
@@ -65,6 +65,7 @@ function EditPropertyForm() {
   const params = useParams();
   const propertyId = params.propertyId as string;
   const firestore = useFirestore();
+  const [driveUrl, setDriveUrl] = React.useState('');
 
   const propertyRef = useMemoFirebase(() => {
     if (!firestore || !propertyId) return null;
@@ -112,6 +113,41 @@ function EditPropertyForm() {
   useEffect(() => {
     form.reset(defaultValues);
   }, [defaultValues, form]);
+
+  const handleConvertUrl = () => {
+    try {
+      const url = new URL(driveUrl);
+      const pathParts = url.pathname.split('/');
+      const fileIdIndex = pathParts.findIndex(part => part === 'd') + 1;
+      if (fileIdIndex > 0 && pathParts[fileIdIndex]) {
+        const fileId = pathParts[fileIdIndex];
+        const convertedUrl = `https://drive.google.com/uc?export=view&id=${fileId}`;
+        
+        const currentImagesString = form.getValues('images') as string | string[];
+        const currentImages = Array.isArray(currentImagesString) 
+            ? currentImagesString.join(', ') 
+            : currentImagesString;
+
+        const updatedImages = currentImages ? `${currentImages}, ${convertedUrl}` : convertedUrl;
+        
+        form.setValue('images', updatedImages.split(',').map(s => s.trim()) as any);
+        
+        toast({
+          title: 'URL Converted!',
+          description: 'Google Drive URL has been added to the list.',
+        });
+        setDriveUrl('');
+      } else {
+        throw new Error('Invalid Google Drive URL format.');
+      }
+    } catch (error) {
+      toast({
+        variant: 'destructive',
+        title: 'Conversion Failed',
+        description: 'Please enter a valid Google Drive file sharing link.',
+      });
+    }
+  };
 
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
@@ -179,7 +215,7 @@ function EditPropertyForm() {
       </CardHeader>
       <CardContent>
         <Form {...form}>
-          <form key={defaultValues.id} onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+          <form key={property?.id} onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <FormField
                 control={form.control}
@@ -371,26 +407,46 @@ function EditPropertyForm() {
                     )}
                     />
             </div>
-             <FormField
-              control={form.control}
-              name="images"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Image URLs</FormLabel>
-                  <FormControl>
-                    <Textarea 
-                      placeholder="https://example.com/image1.jpg, https://example.com/image2.jpg"
-                      {...field}
-                       value={field.value ?? ''}
+
+            <Card className="bg-muted/30">
+                <CardContent className="p-4 space-y-4">
+                    <div className="space-y-2">
+                        <FormLabel>Google Drive URL Converter</FormLabel>
+                        <div className="flex gap-2">
+                            <Input 
+                                placeholder="Paste Google Drive sharing link here" 
+                                value={driveUrl}
+                                onChange={(e) => setDriveUrl(e.target.value)}
+                            />
+                            <Button type="button" variant="secondary" onClick={handleConvertUrl}>
+                                <Wand2 className="mr-2 h-4 w-4" />
+                                Convert & Add
+                            </Button>
+                        </div>
+                    </div>
+                     <FormField
+                      control={form.control}
+                      name="images"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Image URLs</FormLabel>
+                          <FormControl>
+                            <Textarea 
+                              placeholder="https://example.com/image1.jpg, https://example.com/image2.jpg"
+                              {...field}
+                               value={field.value ?? ''}
+                            />
+                          </FormControl>
+                          <FormDescription>
+                            Comma-separated list of image URLs. Use the tool above for Google Drive links.
+                          </FormDescription>
+                          <FormMessage />
+                        </FormItem>
+                      )}
                     />
-                  </FormControl>
-                  <FormDescription>
-                    Comma-separated list of image URLs.
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                </CardContent>
+            </Card>
+
              <FormField
               control={form.control}
               name="features"

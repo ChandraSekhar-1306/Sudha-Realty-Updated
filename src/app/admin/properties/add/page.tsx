@@ -36,8 +36,9 @@ import {
 import { Checkbox } from '@/components/ui/checkbox';
 import { useFirestore, errorEmitter, FirestorePermissionError } from '@/firebase';
 import { collection, addDoc } from 'firebase/firestore';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Wand2 } from 'lucide-react';
 import Link from 'next/link';
+import React from 'react';
 
 const formSchema = z.object({
   title: z.string().min(5, 'Title must be at least 5 characters.'),
@@ -60,6 +61,7 @@ export default function AddPropertyPage() {
   const { toast } = useToast();
   const router = useRouter();
   const firestore = useFirestore();
+  const [driveUrl, setDriveUrl] = React.useState('');
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -77,6 +79,39 @@ export default function AddPropertyPage() {
       bathrooms: 0,
     },
   });
+  
+  const handleConvertUrl = () => {
+    try {
+      const url = new URL(driveUrl);
+      const pathParts = url.pathname.split('/');
+      const fileIdIndex = pathParts.findIndex(part => part === 'd') + 1;
+      if (fileIdIndex > 0 && pathParts[fileIdIndex]) {
+        const fileId = pathParts[fileIdIndex];
+        const convertedUrl = `https://drive.google.com/uc?export=view&id=${fileId}`;
+        
+        const currentImages = form.getValues('images') || [];
+        const currentImagesString = Array.isArray(currentImages) ? currentImages.join(', ') : currentImages;
+
+        const updatedImages = currentImagesString ? `${currentImagesString}, ${convertedUrl}` : convertedUrl;
+        
+        form.setValue('images', updatedImages.split(',').map(s => s.trim()));
+        
+        toast({
+          title: 'URL Converted!',
+          description: 'Google Drive URL has been added to the list.',
+        });
+        setDriveUrl('');
+      } else {
+        throw new Error('Invalid Google Drive URL format.');
+      }
+    } catch (error) {
+      toast({
+        variant: 'destructive',
+        title: 'Conversion Failed',
+        description: 'Please enter a valid Google Drive file sharing link.',
+      });
+    }
+  };
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     if (!firestore) {
@@ -315,26 +350,46 @@ export default function AddPropertyPage() {
                     )}
                     />
             </div>
-             <FormField
-              control={form.control}
-              name="images"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Image URLs</FormLabel>
-                  <FormControl>
-                    <Textarea 
-                      placeholder="https://example.com/image1.jpg, https://example.com/image2.jpg"
-                      {...field}
-                       value={Array.isArray(field.value) ? field.value.join(', ') : (field.value || '')}
+            
+            <Card className="bg-muted/30">
+                <CardContent className="p-4 space-y-4">
+                    <div className="space-y-2">
+                        <FormLabel>Google Drive URL Converter</FormLabel>
+                        <div className="flex gap-2">
+                            <Input 
+                                placeholder="Paste Google Drive sharing link here" 
+                                value={driveUrl}
+                                onChange={(e) => setDriveUrl(e.target.value)}
+                            />
+                            <Button type="button" variant="secondary" onClick={handleConvertUrl}>
+                                <Wand2 className="mr-2 h-4 w-4" />
+                                Convert & Add
+                            </Button>
+                        </div>
+                    </div>
+                     <FormField
+                      control={form.control}
+                      name="images"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Image URLs</FormLabel>
+                          <FormControl>
+                            <Textarea 
+                              placeholder="https://example.com/image1.jpg, https://example.com/image2.jpg"
+                              {...field}
+                               value={Array.isArray(field.value) ? field.value.join(', ') : (field.value || '')}
+                            />
+                          </FormControl>
+                          <FormDescription>
+                            Comma-separated list of image URLs. Use the tool above for Google Drive links.
+                          </FormDescription>
+                          <FormMessage />
+                        </FormItem>
+                      )}
                     />
-                  </FormControl>
-                  <FormDescription>
-                    Comma-separated list of image URLs.
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                </CardContent>
+            </Card>
+
              <FormField
               control={form.control}
               name="features"

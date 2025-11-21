@@ -99,7 +99,11 @@ export function Footer() {
           </div>
         </div>
         <div className="mt-8 border-t pt-6 text-center text-sm text-muted-foreground">
-          <p>&copy; {new Date().getFullYear()} Sudha Realty. All rights reserved.</p>
+          <div className="flex justify-center gap-4">
+             <Link href="/privacy-policy" className="hover:text-primary transition-colors">Privacy Policy</Link>
+            <Link href="/terms-of-use" className="hover:text-primary transition-colors">Terms of Use</Link>
+          </div>
+          <p className="mt-2">&copy; {new Date().getFullYear()} Sudha Realty. All rights reserved.</p>
         </div>
       </div>
     </footer>

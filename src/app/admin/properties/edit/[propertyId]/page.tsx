@@ -2,7 +2,7 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
+import { useForm, useFieldArray } from 'react-hook-form';
 import * as z from 'zod';
 import { useRouter, useParams, notFound } from 'next/navigation';
 import React, { useEffect, useMemo, Suspense } from 'react';
@@ -37,7 +37,7 @@ import {
 import { Checkbox } from '@/components/ui/checkbox';
 import { useFirestore, useDoc, useMemoFirebase, errorEmitter, FirestorePermissionError } from '@/firebase';
 import { doc, updateDoc } from 'firebase/firestore';
-import { ArrowLeft, Loader2, Wand2 } from 'lucide-react';
+import { ArrowLeft, Loader2, Wand2, PlusCircle, Trash2 } from 'lucide-react';
 import Link from 'next/link';
 import type { Property } from '@/lib/types';
 
@@ -57,6 +57,10 @@ const formSchema = z.object({
   images: z.string().transform(val => val ? val.split(',').map(s => s.trim()) : []),
   features: z.string().transform(val => val ? val.split(',').map(s => s.trim()) : []).optional(),
   saleType: z.enum(['Fresh Sales', 'Resales']).optional().nullable(),
+  floorPlans: z.array(z.object({
+    name: z.string().min(1, "Name is required"),
+    url: z.string().url("A valid URL is required"),
+  })).optional(),
 });
 
 function EditPropertyForm() {
@@ -91,6 +95,7 @@ function EditPropertyForm() {
         type: 'Apartment' as const,
         facing: null,
         saleType: null,
+        floorPlans: [],
       };
     }
     return {
@@ -102,12 +107,18 @@ function EditPropertyForm() {
       facing: property.facing ?? null,
       saleType: property.saleType ?? null,
       locationUrl: property.locationUrl ?? '',
+      floorPlans: property.floorPlans ?? [],
     };
   }, [property]);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: defaultValues,
+  });
+
+  const { fields, append, remove } = useFieldArray({
+    control: form.control,
+    name: "floorPlans",
   });
 
   useEffect(() => {
@@ -160,6 +171,7 @@ function EditPropertyForm() {
     const updateData = {
       ...values,
       features: values.features || [],
+      floorPlans: values.floorPlans || [],
     };
     
     updateDoc(propertyToUpdateRef, updateData)
@@ -467,6 +479,61 @@ function EditPropertyForm() {
                 </FormItem>
               )}
             />
+            
+            <div>
+              <FormLabel>Floor Plans (Optional)</FormLabel>
+              <div className="space-y-4 rounded-md border p-4 mt-2">
+                {fields.map((field, index) => (
+                  <div key={field.id} className="grid grid-cols-1 sm:grid-cols-[1fr_2fr_auto] gap-3 items-end">
+                    <FormField
+                      control={form.control}
+                      name={`floorPlans.${index}.name`}
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-xs">Name</FormLabel>
+                          <FormControl>
+                            <Input placeholder="e.g., Ground Floor" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name={`floorPlans.${index}.url`}
+                      render={({ field }) => (
+                        <FormItem>
+                           <FormLabel className="text-xs">PDF URL</FormLabel>
+                          <FormControl>
+                            <Input placeholder="https://..." {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <Button
+                      type="button"
+                      variant="destructive"
+                      size="icon"
+                      onClick={() => remove(index)}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
+                ))}
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => append({ name: "", url: "" })}
+                  className="mt-2"
+                >
+                  <PlusCircle className="mr-2 h-4 w-4" />
+                  Add Floor Plan
+                </Button>
+              </div>
+            </div>
+
             <FormField
                 control={form.control}
                 name="isFeatured"

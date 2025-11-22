@@ -51,6 +51,8 @@ export function PropertyCard({ property }: PropertyCardProps) {
     );
   };
 
+  const validImages = property.images.filter(url => url && url.trim() !== '');
+
   return (
     <Card className="overflow-hidden transition-shadow duration-300 hover:shadow-lg bg-card">
       <CardContent className="p-4 grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -58,7 +60,8 @@ export function PropertyCard({ property }: PropertyCardProps) {
         <div className="md:col-span-1">
           <Carousel className="w-full rounded-lg overflow-hidden relative">
             <CarouselContent>
-              {property.images.map((imageUrl, index) => (
+              {validImages.length > 0 ? (
+                validImages.map((imageUrl, index) => (
                   <CarouselItem key={index}>
                     <Image
                       src={imageUrl}
@@ -68,10 +71,21 @@ export function PropertyCard({ property }: PropertyCardProps) {
                       className="aspect-video w-full object-cover"
                     />
                   </CarouselItem>
-              ))}
+                ))
+              ) : (
+                 <CarouselItem>
+                    <div className="aspect-video w-full bg-muted flex items-center justify-center">
+                        <span className="text-sm text-muted-foreground">No Image</span>
+                    </div>
+                </CarouselItem>
+              )}
             </CarouselContent>
-            <CarouselPrevious className="left-2 bg-background/50 hover:bg-background/80" />
-            <CarouselNext className="right-2 bg-background/50 hover:bg-background/80" />
+            {validImages.length > 1 && (
+                <>
+                    <CarouselPrevious className="left-2 bg-background/50 hover:bg-background/80" />
+                    <CarouselNext className="right-2 bg-background/50 hover:bg-background/80" />
+                </>
+            )}
             
             <div className='absolute top-2 right-2 z-10 flex flex-col items-end gap-1'>
               {property.isFeatured && 

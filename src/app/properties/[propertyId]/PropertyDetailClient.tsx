@@ -5,7 +5,7 @@ import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Bed, Bath, Triangle, MapPin, CheckCircle, Share2, Copy, ExternalLink } from 'lucide-react';
+import { Bed, Bath, Triangle, MapPin, CheckCircle, Share2, Copy, ExternalLink, FileText } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import {
@@ -165,6 +165,34 @@ export function PropertyDetailClient({ property }: { property: Property }) {
                       </li>
                     ))}
                   </ul>
+                </CardContent>
+              </Card>
+            )}
+
+            {property.floorPlans && property.floorPlans.length > 0 && (
+              <Card className="mt-8">
+                <CardHeader>
+                  <CardTitle className="font-headline text-2xl">Floor Plans</CardTitle>
+                </CardHeader>
+                <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    {property.floorPlans.map((plan, index) => (
+                      <a 
+                        key={index}
+                        href={plan.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="group flex items-center gap-4 rounded-lg border bg-card p-4 text-card-foreground transition-all hover:bg-muted"
+                      >
+                         <div className="flex-shrink-0 flex items-center justify-center h-10 w-10 rounded-full bg-primary/10 text-primary">
+                            <FileText className="w-5 h-5" />
+                        </div>
+                        <div className="flex-grow">
+                          <p className="font-semibold group-hover:text-primary">{plan.name}</p>
+                          <p className="text-xs text-muted-foreground">Click to view PDF</p>
+                        </div>
+                        <ExternalLink className="h-4 w-4 text-muted-foreground ml-auto group-hover:text-primary"/>
+                      </a>
+                    ))}
                 </CardContent>
               </Card>
             )}

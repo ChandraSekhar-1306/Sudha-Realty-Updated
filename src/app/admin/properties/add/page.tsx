@@ -2,7 +2,7 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
+import { useForm, useFieldArray } from 'react-hook-form';
 import * as z from 'zod';
 import { useRouter } from 'next/navigation';
 
@@ -36,7 +36,7 @@ import {
 import { Checkbox } from '@/components/ui/checkbox';
 import { useFirestore, errorEmitter, FirestorePermissionError } from '@/firebase';
 import { collection, addDoc } from 'firebase/firestore';
-import { ArrowLeft, Wand2 } from 'lucide-react';
+import { ArrowLeft, Wand2, PlusCircle, Trash2 } from 'lucide-react';
 import Link from 'next/link';
 import React from 'react';
 
@@ -55,6 +55,10 @@ const formSchema = z.object({
   images: z.string().transform(val => val ? val.split(',').map(s => s.trim()) : []),
   features: z.string().transform(val => val ? val.split(',').map(s => s.trim()) : []).optional(),
   saleType: z.enum(['Fresh Sales', 'Resales']).optional(),
+  floorPlans: z.array(z.object({
+    name: z.string().min(1, "Name is required"),
+    url: z.string().url("A valid URL is required"),
+  })).optional(),
 });
 
 export default function AddPropertyPage() {
@@ -77,7 +81,13 @@ export default function AddPropertyPage() {
       area: 0,
       bedrooms: 0,
       bathrooms: 0,
+      floorPlans: [],
     },
+  });
+
+  const { fields, append, remove } = useFieldArray({
+    control: form.control,
+    name: "floorPlans",
   });
   
   const handleConvertUrl = () => {
@@ -123,6 +133,7 @@ export default function AddPropertyPage() {
     const dataToAdd = {
         ...values,
         features: values.features || [],
+        floorPlans: values.floorPlans || [],
     };
     
     addDoc(propertiesCol, dataToAdd)
@@ -410,6 +421,61 @@ export default function AddPropertyPage() {
                 </FormItem>
               )}
             />
+            
+            <div>
+              <FormLabel>Floor Plans (Optional)</FormLabel>
+              <div className="space-y-4 rounded-md border p-4 mt-2">
+                {fields.map((field, index) => (
+                  <div key={field.id} className="grid grid-cols-1 sm:grid-cols-[1fr_2fr_auto] gap-3 items-end">
+                    <FormField
+                      control={form.control}
+                      name={`floorPlans.${index}.name`}
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-xs">Name</FormLabel>
+                          <FormControl>
+                            <Input placeholder="e.g., Ground Floor" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name={`floorPlans.${index}.url`}
+                      render={({ field }) => (
+                        <FormItem>
+                           <FormLabel className="text-xs">PDF URL</FormLabel>
+                          <FormControl>
+                            <Input placeholder="https://..." {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <Button
+                      type="button"
+                      variant="destructive"
+                      size="icon"
+                      onClick={() => remove(index)}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
+                ))}
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => append({ name: "", url: "" })}
+                  className="mt-2"
+                >
+                  <PlusCircle className="mr-2 h-4 w-4" />
+                  Add Floor Plan
+                </Button>
+              </div>
+            </div>
+
             <FormField
                 control={form.control}
                 name="isFeatured"

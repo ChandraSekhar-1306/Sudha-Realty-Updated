@@ -15,6 +15,7 @@ export interface Property {
   facing?: 'North' | 'South' | 'East' | 'West' | 'North-East' | 'North-West' | 'South-East' | 'South-West';
   saleType?: 'Fresh Sales' | 'Resales';
   features?: string[];
+  floorPlans?: { name: string; url: string; }[];
 }
 
 export interface CommunityListing {

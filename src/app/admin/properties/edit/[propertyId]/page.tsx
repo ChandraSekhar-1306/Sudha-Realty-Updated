@@ -40,6 +40,7 @@ import { doc, updateDoc } from 'firebase/firestore';
 import { ArrowLeft, Loader2, Wand2, PlusCircle, Trash2 } from 'lucide-react';
 import Link from 'next/link';
 import type { Property } from '@/lib/types';
+import { cn } from '@/lib/utils';
 
 
 const formSchema = z.object({
@@ -61,6 +62,8 @@ const formSchema = z.object({
     name: z.string().min(1, "Name is required"),
     url: z.string().url("A valid URL is required"),
   })).optional(),
+  isUnderConstruction: z.boolean().default(false),
+  possessionDate: z.string().optional(),
 });
 
 function EditPropertyForm() {
@@ -96,6 +99,8 @@ function EditPropertyForm() {
         facing: null,
         saleType: null,
         floorPlans: [],
+        isUnderConstruction: false,
+        possessionDate: '',
       };
     }
     return {
@@ -108,6 +113,8 @@ function EditPropertyForm() {
       saleType: property.saleType ?? null,
       locationUrl: property.locationUrl ?? '',
       floorPlans: property.floorPlans ?? [],
+      isUnderConstruction: property.isUnderConstruction ?? false,
+      possessionDate: property.possessionDate ?? '',
     };
   }, [property]);
 
@@ -120,6 +127,8 @@ function EditPropertyForm() {
     control: form.control,
     name: "floorPlans",
   });
+  
+  const isUnderConstruction = form.watch('isUnderConstruction');
 
   useEffect(() => {
     form.reset(defaultValues);
@@ -418,6 +427,48 @@ function EditPropertyForm() {
                         </FormItem>
                     )}
                     />
+            </div>
+            
+             <div className="space-y-4">
+                <FormField
+                    control={form.control}
+                    name="isUnderConstruction"
+                    render={({ field }) => (
+                        <FormItem className="flex flex-row items-center space-x-3 space-y-0 rounded-md border p-4">
+                            <FormControl>
+                            <Checkbox
+                                checked={field.value}
+                                onCheckedChange={field.onChange}
+                            />
+                            </FormControl>
+                            <div className="space-y-1 leading-none">
+                            <FormLabel>
+                                Is this property under construction?
+                            </FormLabel>
+                            </div>
+                        </FormItem>
+                    )}
+                />
+                <div className={cn("transition-all duration-300 ease-in-out", isUnderConstruction ? "opacity-100 max-h-40" : "opacity-0 max-h-0 overflow-hidden")}>
+                    {isUnderConstruction && (
+                        <FormField
+                            control={form.control}
+                            name="possessionDate"
+                            render={({ field }) => (
+                                <FormItem>
+                                <FormLabel>Possession Date</FormLabel>
+                                <FormControl>
+                                    <Input placeholder="e.g., December 2024" {...field} value={field.value ?? ''} />
+                                </FormControl>
+                                <FormDescription>
+                                    The estimated date of possession.
+                                </FormDescription>
+                                <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                    )}
+                </div>
             </div>
 
             <Card className="bg-muted/30">

@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -122,7 +121,7 @@ export function ContactFormDialog({ propertyTitle, propertyId }: ContactFormDial
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className="w-full sm:w-auto flex-1">
+        <Button size="sm" variant="default" className="mt-2">
           <Phone className="mr-2 h-4 w-4" />
           Inquire
         </Button>
@@ -216,5 +215,3 @@ export function ContactFormDialog({ propertyTitle, propertyId }: ContactFormDial
     </Dialog>
   );
 }
-
-    

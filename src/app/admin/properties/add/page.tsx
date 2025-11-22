@@ -39,6 +39,7 @@ import { collection, addDoc } from 'firebase/firestore';
 import { ArrowLeft, Wand2, PlusCircle, Trash2 } from 'lucide-react';
 import Link from 'next/link';
 import React from 'react';
+import { cn } from '@/lib/utils';
 
 const formSchema = z.object({
   title: z.string().min(5, 'Title must be at least 5 characters.'),
@@ -59,6 +60,8 @@ const formSchema = z.object({
     name: z.string().min(1, "Name is required"),
     url: z.string().url("A valid URL is required"),
   })).optional(),
+  isUnderConstruction: z.boolean().default(false),
+  possessionDate: z.string().optional(),
 });
 
 export default function AddPropertyPage() {
@@ -82,6 +85,8 @@ export default function AddPropertyPage() {
       bedrooms: 0,
       bathrooms: 0,
       floorPlans: [],
+      isUnderConstruction: false,
+      possessionDate: '',
     },
   });
 
@@ -89,6 +94,8 @@ export default function AddPropertyPage() {
     control: form.control,
     name: "floorPlans",
   });
+  
+  const isUnderConstruction = form.watch('isUnderConstruction');
   
   const handleConvertUrl = () => {
     try {
@@ -360,6 +367,48 @@ export default function AddPropertyPage() {
                         </FormItem>
                     )}
                     />
+            </div>
+
+            <div className="space-y-4">
+                <FormField
+                    control={form.control}
+                    name="isUnderConstruction"
+                    render={({ field }) => (
+                        <FormItem className="flex flex-row items-center space-x-3 space-y-0 rounded-md border p-4">
+                            <FormControl>
+                            <Checkbox
+                                checked={field.value}
+                                onCheckedChange={field.onChange}
+                            />
+                            </FormControl>
+                            <div className="space-y-1 leading-none">
+                            <FormLabel>
+                                Is this property under construction?
+                            </FormLabel>
+                            </div>
+                        </FormItem>
+                    )}
+                />
+                <div className={cn("transition-all duration-300 ease-in-out", isUnderConstruction ? "opacity-100 max-h-40" : "opacity-0 max-h-0 overflow-hidden")}>
+                    {isUnderConstruction && (
+                        <FormField
+                            control={form.control}
+                            name="possessionDate"
+                            render={({ field }) => (
+                                <FormItem>
+                                <FormLabel>Possession Date</FormLabel>
+                                <FormControl>
+                                    <Input placeholder="e.g., December 2024" {...field} />
+                                </FormControl>
+                                <FormDescription>
+                                    The estimated date of possession.
+                                </FormDescription>
+                                <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                    )}
+                </div>
             </div>
             
             <Card className="bg-muted/30">

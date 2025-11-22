@@ -1,11 +1,11 @@
 
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Image from 'next/image';
-import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Bed, Bath, Triangle, MapPin, CheckCircle, Share2, Copy, ExternalLink, FileText } from 'lucide-react';
+import { Bed, Bath, Triangle, MapPin, CheckCircle, Share2, ExternalLink, FileText, ArrowLeft, Camera, CalendarClock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import {
@@ -14,36 +14,29 @@ import {
   CarouselItem,
   CarouselNext,
   CarouselPrevious,
-  type CarouselApi,
 } from '@/components/ui/carousel';
-import { cn } from '@/lib/utils';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
 import type { Property } from '@/lib/types';
 import { useToast } from '@/hooks/use-toast';
 import { ContactFormDialog } from '@/components/ContactFormDialog';
+import { useRouter } from 'next/navigation';
 
 export function PropertyDetailClient({ property }: { property: Property }) {
-  const [api, setApi] = useState<CarouselApi>();
-  const [current, setCurrent] = useState(0);
   const { toast } = useToast();
+  const router = useRouter();
+  const [openGallery, setOpenGallery] = useState(false);
+  const [openFloorPlans, setOpenFloorPlans] = useState(false);
 
-  useEffect(() => {
-    if (!api) {
-      return;
-    }
-    setCurrent(api.selectedScrollSnap() + 1);
-    const onSelect = () => {
-      setCurrent(api.selectedScrollSnap() + 1);
-    };
-    api.on('select', onSelect);
-    return () => {
-      api.off('select', onSelect);
-    };
-  }, [api]);
+  const validImages = property.images ? property.images.filter(url => url && url.trim() !== '') : [];
+  const heroImage = validImages[0];
+  const galleryImages = validImages.slice(1);
 
-  const handleThumbnailClick = (index: number) => {
-    api?.scrollTo(index);
-  };
-  
   const handleShare = async () => {
     const shareData = {
       title: property.title,
@@ -54,7 +47,6 @@ export function PropertyDetailClient({ property }: { property: Property }) {
       if (navigator.share) {
         await navigator.share(shareData);
       } else {
-        // Fallback for browsers that do not support Web Share API
         await navigator.clipboard.writeText(window.location.href);
         toast({
           title: 'Link Copied!',
@@ -63,7 +55,6 @@ export function PropertyDetailClient({ property }: { property: Property }) {
       }
     } catch (error) {
       console.error('Error sharing:', error);
-      // Fallback for when sharing fails
       await navigator.clipboard.writeText(window.location.href);
       toast({
         title: 'Link Copied!',
@@ -88,183 +79,191 @@ export function PropertyDetailClient({ property }: { property: Property }) {
   return (
     <div className="bg-background">
       <div className="container py-12 sm:py-16">
-        <div className="grid grid-cols-1 gap-8 lg:grid-cols-3 lg:gap-12">
-          <div className="lg:col-span-2">
-            <div className="space-y-4">
-              <Carousel className="w-full overflow-hidden rounded-lg shadow-lg" setApi={setApi}>
-                <CarouselContent>
-                  {property.images.map((imageUrl, index) => (
-                    <CarouselItem key={index}>
-                      <Image
-                        src={imageUrl}
-                        alt={`${property.title} - Image ${index + 1}`}
-                        width={1200}
-                        height={800}
-                        className="aspect-[3/2] h-auto w-full object-cover"
-                      />
-                    </CarouselItem>
-                  ))}
-                </CarouselContent>
-                <CarouselPrevious className="left-4" />
-                <CarouselNext className="right-4" />
-              </Carousel>
-              <div className="grid grid-cols-6 gap-2">
-                {property.images.map((imageUrl, index) => (
-                  <div
-                    key={index}
-                    className={cn(
-                      "relative aspect-video cursor-pointer overflow-hidden rounded-md border-2",
-                      (current - 1) === index ? "border-primary" : "border-transparent"
-                    )}
-                    onClick={() => handleThumbnailClick(index)}
-                  >
-                    <Image
-                      src={imageUrl}
-                      alt={`Thumbnail ${index + 1}`}
-                      fill
-                      className="object-cover transition-opacity hover:opacity-80"
-                    />
-                  </div>
-                ))}
-              </div>
+        <div className="mb-6">
+          <Button variant="ghost" onClick={() => router.back()} className="text-muted-foreground">
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Back to results
+          </Button>
+        </div>
+
+        {/* --- Header Section --- */}
+        <div className="flex flex-col md:flex-row items-start justify-between mb-6 gap-4">
+          <div>
+            <div className="flex flex-wrap items-center gap-2 mb-2">
+                {property.isFeatured && <Badge>Featured</Badge>}
+                {property.saleType && <Badge variant="secondary">{property.saleType}</Badge>}
+                  {property.isUnderConstruction && <Badge variant="secondary">Under Construction</Badge>}
             </div>
-
-            <div className="mt-8 space-y-4 lg:hidden">
-              <div className="flex items-start justify-between">
-                <div>
-                  <h1 className="font-headline text-3xl font-bold">{property.title}</h1>
-                  <div className="mt-2 flex items-center gap-2 text-muted-foreground">
-                    <MapPin className="h-4 w-4" />
-                    <span>{property.location}</span>
-                  </div>
+            <h1 className="font-headline text-3xl font-bold">{property.title}</h1>
+            <div className="mt-2 flex items-center gap-4 text-muted-foreground">
+                <div className='flex items-center gap-2'>
+                  <MapPin className="h-4 w-4" />
+                  <span>{property.location}</span>
                 </div>
-                <Badge variant="secondary" className="ml-4 shrink-0">{property.type}</Badge>
-              </div>
-            </div>
-
-            <Card className="mt-8">
-              <CardHeader>
-                <CardTitle className="font-headline text-2xl">Description</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="leading-relaxed text-foreground/80">{property.description}</p>
-              </CardContent>
-            </Card>
-
-            {property.features && property.features.length > 0 && (
-              <Card className="mt-8">
-                <CardHeader>
-                  <CardTitle className="font-headline text-2xl">Features & Amenities</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-4">
-                    {property.features.map((feature, index) => (
-                      <li key={index} className="flex items-center gap-3">
-                        <CheckCircle className="h-5 w-5 text-primary flex-shrink-0" />
-                        <span className="text-foreground/90">{feature}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </CardContent>
-              </Card>
-            )}
-
-            {property.floorPlans && property.floorPlans.length > 0 && (
-              <Card className="mt-8">
-                <CardHeader>
-                  <CardTitle className="font-headline text-2xl">Floor Plans</CardTitle>
-                </CardHeader>
-                <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    {property.floorPlans.map((plan, index) => (
-                      <a 
-                        key={index}
-                        href={plan.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="group flex items-center gap-4 rounded-lg border bg-card p-4 text-card-foreground transition-all hover:bg-muted"
-                      >
-                         <div className="flex-shrink-0 flex items-center justify-center h-10 w-10 rounded-full bg-primary/10 text-primary">
-                            <FileText className="w-5 h-5" />
-                        </div>
-                        <div className="flex-grow">
-                          <p className="font-semibold group-hover:text-primary">{plan.name}</p>
-                          <p className="text-xs text-muted-foreground">Click to view PDF</p>
-                        </div>
-                        <ExternalLink className="h-4 w-4 text-muted-foreground ml-auto group-hover:text-primary"/>
-                      </a>
-                    ))}
-                </CardContent>
-              </Card>
-            )}
-          </div>
-
-          <div className="lg:col-span-1">
-            <Card className="sticky top-24 hidden lg:block">
-              <CardHeader>
-                <div className="flex items-start justify-between">
-                  <div>
-                    <h1 className="font-headline text-3xl font-bold">{property.title}</h1>
-                    <div className="mt-2 flex items-center gap-2 text-muted-foreground">
-                      <MapPin className="h-4 w-4" />
-                      <span>{property.location}</span>
-                    </div>
-                  </div>
-                  <Badge variant="secondary" className="ml-4 shrink-0">{property.type}</Badge>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="my-4">
-                  <p className="text-4xl font-bold text-primary">{formatter.format(property.price)}</p>
-                </div>
-                <div className="my-6 grid grid-cols-3 gap-4 border-y py-4 text-center">
-                  {detailItems.map((item) => (
-                    <div key={item.label}>
-                      <item.icon className="mx-auto h-6 w-6 text-primary" />
-                      <p className="mt-1 font-semibold">{item.value}</p>
-                      <p className="text-xs text-muted-foreground">{item.label}</p>
-                    </div>
-                  ))}
-                </div>
-                <h3 className="mb-3 font-headline text-lg font-semibold">Key Details</h3>
-                <ul className="space-y-2 text-sm">
-                  <li className="flex justify-between">
-                    <span className="text-muted-foreground">Property ID:</span>
-                    <span className="font-medium">{property.id}</span>
-                  </li>
-                  <li className="flex justify-between">
-                    <span className="text-muted-foreground">Type:</span>
-                    <span className="font-medium">{property.type}</span>
-                  </li>
-                  <li className="flex justify-between">
-                    <span className="text-muted-foreground">Sale Type:</span>
-                    <span className="font-medium">{property.saleType}</span>
-                  </li>
-                   {property.locationUrl && (
-                    <li className="flex justify-between items-center">
-                        <span className="text-muted-foreground">Location:</span>
-                        <Button variant="link" asChild className="p-0 h-auto">
-                            <a href={property.locationUrl} target="_blank" rel="noopener noreferrer">
-                                View on Map <ExternalLink className="ml-1 h-3 w-3" />
-                            </a>
-                        </Button>
-                    </li>
-                  )}
-                </ul>
-              </CardContent>
-              <CardFooter className="flex-col items-stretch gap-2 pt-6">
-                <div className="flex gap-2">
-                    <ContactFormDialog propertyTitle={property.title} propertyId={property.id} />
-                    <Button size="lg" variant="outline" className="px-3" onClick={handleShare}>
-                        <Share2 className="h-5 w-5" />
-                        <span className="sr-only">Share</span>
+               {property.locationUrl && (
+                    <Button variant="link" asChild className="p-0 h-auto">
+                        <a href={property.locationUrl} target="_blank" rel="noopener noreferrer" className="text-sm">
+                            (See on map <ExternalLink className="inline ml-1 h-3 w-3" />)
+                        </a>
                     </Button>
+                )}
+                 <Button variant="ghost" size="icon" className="h-8 w-8" onClick={handleShare}>
+                    <Share2 className="h-4 w-4" />
+                    <span className="sr-only">Share</span>
+                </Button>
+            </div>
+          </div>
+          <div className="w-full md:w-auto flex-shrink-0 text-left md:text-right">
+                <p className="text-3xl font-bold text-primary">{formatter.format(property.price)}</p>
+                <ContactFormDialog propertyTitle={property.title} propertyId={property.id} />
+          </div>
+        </div>
+        
+        {/* --- Image Gallery Section --- */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-2">
+          {/* Main Image */}
+          <Dialog open={openGallery} onOpenChange={setOpenGallery}>
+            <DialogTrigger asChild>
+                <div className="lg:col-span-2 relative h-64 md:h-[28rem] cursor-pointer group">
+                {heroImage && <Image src={heroImage} alt={property.title} fill className="object-cover rounded-lg group-hover:opacity-90 transition-opacity" />}
+                {!heroImage && <div className="w-full h-full bg-muted flex items-center justify-center text-muted-foreground rounded-lg">No Image</div>}
                 </div>
-              </CardFooter>
-            </Card>
+            </DialogTrigger>
+            
+            {/* --- All Photos Dialog --- */}
+            <DialogContent className="max-w-4xl p-0">
+                <DialogHeader className="p-4 border-b">
+                    <DialogTitle>Photos of {property.title}</DialogTitle>
+                </DialogHeader>
+                <Carousel>
+                <CarouselContent>
+                    {validImages.map((imgUrl, index) => (
+                    <CarouselItem key={index}>
+                        <div className="aspect-video relative">
+                        <Image src={imgUrl} alt={`${property.title} - Image ${index + 1}`} fill className="object-contain"/>
+                        </div>
+                    </CarouselItem>
+                    ))}
+                </CarouselContent>
+                {validImages.length > 1 && <><CarouselPrevious className="left-4" /><CarouselNext className="right-4" /></>}
+                </Carousel>
+            </DialogContent>
+          </Dialog>
+
+          {/* Side Images & Links */}
+          <div className="grid grid-cols-2 lg:grid-cols-1 lg:grid-rows-2 gap-2">
+            <Dialog open={openGallery} onOpenChange={setOpenGallery}>
+                <DialogTrigger asChild>
+                    <div className="relative h-40 md:h-full cursor-pointer group">
+                    {galleryImages[0] ? (
+                        <Image src={galleryImages[0]} alt={`${property.title} - 1`} fill className="object-cover rounded-lg group-hover:opacity-90 transition-opacity" />
+                    ) : (
+                        <div className="w-full h-full bg-muted flex items-center justify-center text-muted-foreground rounded-lg">No Image</div>
+                    )}
+                    </div>
+                </DialogTrigger>
+            </Dialog>
+
+            <div className="grid grid-cols-2 gap-2">
+                <Dialog open={openGallery} onOpenChange={setOpenGallery}>
+                    <DialogTrigger asChild>
+                        <button className="relative h-full w-full bg-muted rounded-lg flex flex-col items-center justify-center text-muted-foreground hover:bg-muted/80 group">
+                            <Camera className="h-6 w-6 mb-1 text-primary"/>
+                            <span className='font-semibold'>{validImages.length} Photos</span>
+                        </button>
+                    </DialogTrigger>
+                </Dialog>
+
+                <Dialog open={openFloorPlans} onOpenChange={setOpenFloorPlans}>
+                    <DialogTrigger asChild>
+                        <button disabled={!property.floorPlans || property.floorPlans.length === 0} className="relative h-full w-full bg-muted rounded-lg flex flex-col items-center justify-center text-muted-foreground hover:bg-muted/80 group disabled:cursor-not-allowed disabled:opacity-50">
+                            <FileText className="h-6 w-6 mb-1 text-primary"/>
+                            <span className='font-semibold'>Floor Plan</span>
+                        </button>
+                    </DialogTrigger>
+                      {/* --- Floor Plans Dialog --- */}
+                    <DialogContent className="max-w-4xl">
+                        <DialogHeader>
+                            <DialogTitle>Floor Plans for {property.title}</DialogTitle>
+                        </DialogHeader>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 py-4">
+                            {property.floorPlans && property.floorPlans.map((plan, index) => (
+                            <a
+                                key={index}
+                                href={plan.url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="group flex items-center gap-4 rounded-lg border bg-card p-4 text-card-foreground transition-all hover:bg-muted"
+                            >
+                                <div className="flex-shrink-0 flex items-center justify-center h-10 w-10 rounded-full bg-primary/10 text-primary">
+                                <FileText className="w-5 h-5" />
+                                </div>
+                                <div className="flex-grow">
+                                <p className="font-semibold group-hover:text-primary">{plan.name}</p>
+                                <p className="text-xs text-muted-foreground">Click to view PDF</p>
+                                </div>
+                                <ExternalLink className="h-4 w-4 text-muted-foreground ml-auto group-hover:text-primary" />
+                            </a>
+                            ))}
+                        </div>
+                    </DialogContent>
+                </Dialog>
+            </div>
+          </div>
+        </div>
+
+
+        {/* --- Details Section --- */}
+        <div className="mt-8 grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="lg:col-span-2 space-y-8">
+              <Card>
+                <CardHeader><CardTitle className="font-headline text-2xl">Property Overview</CardTitle></CardHeader>
+                <CardContent className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+                    {detailItems.map((item) => (
+                        <div key={item.label} className="p-4 rounded-lg bg-muted/50">
+                        <item.icon className="mx-auto h-7 w-7 text-primary" />
+                        <p className="mt-2 font-semibold text-lg">{item.value}</p>
+                        <p className="text-xs text-muted-foreground">{item.label}</p>
+                        </div>
+                    ))}
+                </CardContent>
+              </Card>
+
+               {property.isUnderConstruction && property.possessionDate && (
+                    <div className="flex items-center gap-3 rounded-lg border bg-card p-4">
+                        <CalendarClock className="h-6 w-6 text-primary flex-shrink-0" />
+                        <div className="flex flex-wrap items-baseline gap-x-2">
+                            <h3 className="font-semibold text-base">Possession By:</h3>
+                            <p className="text-muted-foreground">{property.possessionDate}</p>
+                        </div>
+                    </div>
+                )}
+
+              <Card>
+                <CardHeader><CardTitle className="font-headline text-2xl">Description</CardTitle></CardHeader>
+                <CardContent><p className="leading-relaxed text-foreground/80">{property.description}</p></CardContent>
+              </Card>
+
+              {property.features && property.features.length > 0 && (
+                <Card>
+                  <CardHeader><CardTitle className="font-headline text-2xl">Features & Amenities</CardTitle></CardHeader>
+                  <CardContent>
+                    <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-4">
+                      {property.features.map((feature, index) => (
+                        <li key={index} className="flex items-center gap-3">
+                          <CheckCircle className="h-5 w-5 text-primary flex-shrink-0" />
+                          <span className="text-foreground/90">{feature}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </CardContent>
+                </Card>
+              )}
           </div>
         </div>
       </div>
 
+       {/* Mobile Sticky Footer */}
       <div className="fixed bottom-0 left-0 right-0 z-40 border-t bg-background/95 backdrop-blur-sm lg:hidden">
         <div className="container flex items-center justify-between gap-4 py-3">
           <div>
@@ -273,10 +272,6 @@ export function PropertyDetailClient({ property }: { property: Property }) {
           </div>
           <div className="flex gap-2">
             <ContactFormDialog propertyTitle={property.title} propertyId={property.id} />
-             <Button variant="outline" className="px-3" onClick={handleShare}>
-                <Share2 className="h-5 w-5" />
-                <span className="sr-only">Share</span>
-            </Button>
           </div>
         </div>
       </div>

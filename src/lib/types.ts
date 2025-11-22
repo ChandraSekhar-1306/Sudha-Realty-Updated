@@ -16,6 +16,8 @@ export interface Property {
   saleType?: 'Fresh Sales' | 'Resales';
   features?: string[];
   floorPlans?: { name: string; url: string; }[];
+  isUnderConstruction?: boolean;
+  possessionDate?: string;
 }
 
 export interface CommunityListing {

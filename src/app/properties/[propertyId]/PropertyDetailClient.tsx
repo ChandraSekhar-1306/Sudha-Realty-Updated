@@ -1,7 +1,7 @@
 
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import Image from 'next/image';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -26,12 +26,11 @@ import type { Property } from '@/lib/types';
 import { useToast } from '@/hooks/use-toast';
 import { ContactFormDialog } from '@/components/ContactFormDialog';
 import { useRouter } from 'next/navigation';
+import { Separator } from '@/components/ui/separator';
 
 export function PropertyDetailClient({ property }: { property: Property }) {
   const { toast } = useToast();
   const router = useRouter();
-  const [openGallery, setOpenGallery] = useState(false);
-  const [openFloorPlans, setOpenFloorPlans] = useState(false);
 
   const validImages = property.images ? property.images.filter(url => url && url.trim() !== '') : [];
   const heroImage = validImages[0];
@@ -63,12 +62,22 @@ export function PropertyDetailClient({ property }: { property: Property }) {
     }
   };
 
+  const formatPrice = (price: number) => {
+    if (price >= 10000000) { // 1 Crore
+      const value = price / 10000000;
+      return `${value.toLocaleString('en-IN', { maximumFractionDigits: 2 })} Cr`;
+    }
+    if (price >= 100000) { // 1 Lakh
+      const value = price / 100000;
+      return `${value.toLocaleString('en-IN', { maximumFractionDigits: 2 })} Lakhs`;
+    }
+    return new Intl.NumberFormat('en-IN', {
+        style: 'currency',
+        currency: 'INR',
+        maximumFractionDigits: 0,
+    }).format(price);
+  };
 
-  const formatter = new Intl.NumberFormat('en-IN', {
-    style: 'currency',
-    currency: 'INR',
-    maximumFractionDigits: 0,
-  });
 
   const detailItems = [
     { icon: Bed, label: 'Bedrooms', value: property.bedrooms },
@@ -92,7 +101,7 @@ export function PropertyDetailClient({ property }: { property: Property }) {
             <div className="flex flex-wrap items-center gap-2 mb-2">
                 {property.isFeatured && <Badge>Featured</Badge>}
                 {property.saleType && <Badge variant="secondary">{property.saleType}</Badge>}
-                  {property.isUnderConstruction && <Badge variant="secondary">Under Construction</Badge>}
+                {property.isUnderConstruction && <Badge variant="secondary">Under Construction</Badge>}
             </div>
             <h1 className="font-headline text-3xl font-bold">{property.title}</h1>
             <div className="mt-2 flex items-center gap-4 text-muted-foreground">
@@ -114,45 +123,24 @@ export function PropertyDetailClient({ property }: { property: Property }) {
             </div>
           </div>
           <div className="w-full md:w-auto flex-shrink-0 text-left md:text-right">
-                <p className="text-3xl font-bold text-primary">{formatter.format(property.price)}</p>
+                <p className="text-3xl font-bold text-primary">₹ {formatPrice(property.price)}</p>
                 <ContactFormDialog propertyTitle={property.title} propertyId={property.id} />
           </div>
         </div>
         
         {/* --- Image Gallery Section --- */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-2">
-          {/* Main Image */}
-          <Dialog open={openGallery} onOpenChange={setOpenGallery}>
-            <DialogTrigger asChild>
-                <div className="lg:col-span-2 relative h-64 md:h-[28rem] cursor-pointer group">
-                {heroImage && <Image src={heroImage} alt={property.title} fill className="object-cover rounded-lg group-hover:opacity-90 transition-opacity" />}
-                {!heroImage && <div className="w-full h-full bg-muted flex items-center justify-center text-muted-foreground rounded-lg">No Image</div>}
-                </div>
-            </DialogTrigger>
+        <Dialog>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-2">
+            {/* Main Image */}
+              <DialogTrigger asChild>
+                  <div className="lg:col-span-2 relative h-64 md:h-[28rem] cursor-pointer group">
+                  {heroImage && <Image src={heroImage} alt={property.title} fill className="object-cover rounded-lg group-hover:opacity-90 transition-opacity" />}
+                  {!heroImage && <div className="w-full h-full bg-muted flex items-center justify-center text-muted-foreground rounded-lg">No Image</div>}
+                  </div>
+              </DialogTrigger>
             
-            {/* --- All Photos Dialog --- */}
-            <DialogContent className="max-w-4xl p-0">
-                <DialogHeader className="p-4 border-b">
-                    <DialogTitle>Photos of {property.title}</DialogTitle>
-                </DialogHeader>
-                <Carousel>
-                <CarouselContent>
-                    {validImages.map((imgUrl, index) => (
-                    <CarouselItem key={index}>
-                        <div className="aspect-video relative">
-                        <Image src={imgUrl} alt={`${property.title} - Image ${index + 1}`} fill className="object-contain"/>
-                        </div>
-                    </CarouselItem>
-                    ))}
-                </CarouselContent>
-                {validImages.length > 1 && <><CarouselPrevious className="left-4" /><CarouselNext className="right-4" /></>}
-                </Carousel>
-            </DialogContent>
-          </Dialog>
-
-          {/* Side Images & Links */}
-          <div className="grid grid-cols-2 lg:grid-cols-1 lg:grid-rows-2 gap-2">
-            <Dialog open={openGallery} onOpenChange={setOpenGallery}>
+            {/* Side Images & Links */}
+            <div className="grid grid-cols-2 lg:grid-cols-1 lg:grid-rows-2 gap-2">
                 <DialogTrigger asChild>
                     <div className="relative h-40 md:h-full cursor-pointer group">
                     {galleryImages[0] ? (
@@ -162,55 +150,71 @@ export function PropertyDetailClient({ property }: { property: Property }) {
                     )}
                     </div>
                 </DialogTrigger>
-            </Dialog>
 
-            <div className="grid grid-cols-2 gap-2">
-                <Dialog open={openGallery} onOpenChange={setOpenGallery}>
-                    <DialogTrigger asChild>
-                        <button className="relative h-full w-full bg-muted rounded-lg flex flex-col items-center justify-center text-muted-foreground hover:bg-muted/80 group">
-                            <Camera className="h-6 w-6 mb-1 text-primary"/>
-                            <span className='font-semibold'>{validImages.length} Photos</span>
-                        </button>
-                    </DialogTrigger>
-                </Dialog>
+              <div className="grid grid-cols-2 gap-2">
+                  <DialogTrigger asChild>
+                      <button className="relative h-full w-full bg-muted rounded-lg flex flex-col items-center justify-center text-muted-foreground hover:bg-muted/80 group">
+                          <Camera className="h-6 w-6 mb-1 text-primary"/>
+                          <span className='font-semibold'>{validImages.length} Photos</span>
+                      </button>
+                  </DialogTrigger>
 
-                <Dialog open={openFloorPlans} onOpenChange={setOpenFloorPlans}>
-                    <DialogTrigger asChild>
-                        <button disabled={!property.floorPlans || property.floorPlans.length === 0} className="relative h-full w-full bg-muted rounded-lg flex flex-col items-center justify-center text-muted-foreground hover:bg-muted/80 group disabled:cursor-not-allowed disabled:opacity-50">
-                            <FileText className="h-6 w-6 mb-1 text-primary"/>
-                            <span className='font-semibold'>Floor Plan</span>
-                        </button>
-                    </DialogTrigger>
-                      {/* --- Floor Plans Dialog --- */}
-                    <DialogContent className="max-w-4xl">
-                        <DialogHeader>
-                            <DialogTitle>Floor Plans for {property.title}</DialogTitle>
-                        </DialogHeader>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 py-4">
-                            {property.floorPlans && property.floorPlans.map((plan, index) => (
-                            <a
-                                key={index}
-                                href={plan.url}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="group flex items-center gap-4 rounded-lg border bg-card p-4 text-card-foreground transition-all hover:bg-muted"
-                            >
-                                <div className="flex-shrink-0 flex items-center justify-center h-10 w-10 rounded-full bg-primary/10 text-primary">
-                                <FileText className="w-5 h-5" />
-                                </div>
-                                <div className="flex-grow">
-                                <p className="font-semibold group-hover:text-primary">{plan.name}</p>
-                                <p className="text-xs text-muted-foreground">Click to view PDF</p>
-                                </div>
-                                <ExternalLink className="h-4 w-4 text-muted-foreground ml-auto group-hover:text-primary" />
-                            </a>
-                            ))}
-                        </div>
-                    </DialogContent>
-                </Dialog>
+                  <Dialog>
+                      <DialogTrigger asChild>
+                          <button disabled={!property.floorPlans || property.floorPlans.length === 0} className="relative h-full w-full bg-muted rounded-lg flex flex-col items-center justify-center text-muted-foreground hover:bg-muted/80 group disabled:cursor-not-allowed disabled:opacity-50">
+                              <FileText className="h-6 w-6 mb-1 text-primary"/>
+                              <span className='font-semibold'>Floor Plan</span>
+                          </button>
+                      </DialogTrigger>
+                        {/* --- Floor Plans Dialog --- */}
+                      <DialogContent className="max-w-4xl">
+                          <DialogHeader>
+                              <DialogTitle>Floor Plans for {property.title}</DialogTitle>
+                          </DialogHeader>
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 py-4">
+                              {property.floorPlans && property.floorPlans.map((plan, index) => (
+                              <a
+                                  key={index}
+                                  href={plan.url}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="group flex items-center gap-4 rounded-lg border bg-card p-4 text-card-foreground transition-all hover:bg-muted"
+                              >
+                                  <div className="flex-shrink-0 flex items-center justify-center h-10 w-10 rounded-full bg-primary/10 text-primary">
+                                  <FileText className="w-5 h-5" />
+                                  </div>
+                                  <div className="flex-grow">
+                                  <p className="font-semibold group-hover:text-primary">{plan.name}</p>
+                                  <p className="text-xs text-muted-foreground">Click to view PDF</p>
+                                  </div>
+                                  <ExternalLink className="h-4 w-4 text-muted-foreground ml-auto group-hover:text-primary" />
+                              </a>
+                              ))}
+                          </div>
+                      </DialogContent>
+                  </Dialog>
+              </div>
             </div>
           </div>
-        </div>
+          {/* --- All Photos Dialog --- */}
+          <DialogContent className="max-w-4xl p-0">
+              <DialogHeader className="p-4 border-b">
+                  <DialogTitle>Photos of {property.title}</DialogTitle>
+              </DialogHeader>
+              <Carousel>
+              <CarouselContent>
+                  {validImages.map((imgUrl, index) => (
+                  <CarouselItem key={index}>
+                      <div className="aspect-video relative">
+                      <Image src={imgUrl} alt={`${property.title} - Image ${index + 1}`} fill className="object-contain"/>
+                      </div>
+                  </CarouselItem>
+                  ))}
+              </CarouselContent>
+              {validImages.length > 1 && <><CarouselPrevious className="left-4" /><CarouselNext className="right-4" /></>}
+              </Carousel>
+          </DialogContent>
+        </Dialog>
 
 
         {/* --- Details Section --- */}
@@ -229,15 +233,15 @@ export function PropertyDetailClient({ property }: { property: Property }) {
                 </CardContent>
               </Card>
 
-               {property.isUnderConstruction && property.possessionDate && (
-                    <div className="flex items-center gap-3 rounded-lg border bg-card p-4">
-                        <CalendarClock className="h-6 w-6 text-primary flex-shrink-0" />
-                        <div className="flex flex-wrap items-baseline gap-x-2">
-                            <h3 className="font-semibold text-base">Possession By:</h3>
-                            <p className="text-muted-foreground">{property.possessionDate}</p>
-                        </div>
+              {property.isUnderConstruction && property.possessionDate && (
+                <div className="flex items-center gap-3 rounded-lg border bg-card p-4">
+                    <CalendarClock className="h-6 w-6 text-primary flex-shrink-0" />
+                    <div className="flex flex-wrap items-baseline gap-x-2">
+                        <h3 className="font-semibold text-base">Possession By:</h3>
+                        <p className="text-muted-foreground">{property.possessionDate}</p>
                     </div>
-                )}
+                </div>
+              )}
 
               <Card>
                 <CardHeader><CardTitle className="font-headline text-2xl">Description</CardTitle></CardHeader>
@@ -267,7 +271,7 @@ export function PropertyDetailClient({ property }: { property: Property }) {
       <div className="fixed bottom-0 left-0 right-0 z-40 border-t bg-background/95 backdrop-blur-sm lg:hidden">
         <div className="container flex items-center justify-between gap-4 py-3">
           <div>
-            <p className="text-lg font-bold text-primary">{formatter.format(property.price)}</p>
+            <p className="text-lg font-bold text-primary">₹ {formatPrice(property.price)}</p>
             <p className="text-xs text-muted-foreground">{property.area.toLocaleString()} sqft</p>
           </div>
           <div className="flex gap-2">

@@ -82,10 +82,7 @@ export function ContactFormDialog({ propertyTitle, propertyId }: ContactFormDial
   const onSubmit = async (data: ContactFormValues) => {
     setIsSubmitting(true);
     try {
-      // =================================================================
-      // IMPORTANT: Replace this URL with your own Formspree form endpoint
-      // Go to formspree.io to create a new form and get your URL.
-      // =================================================================
+      
       const formspreeEndpoint = 'https://formspree.io/f/movrdvpv';
       
       const response = await fetch(formspreeEndpoint,  {

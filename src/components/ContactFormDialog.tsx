@@ -27,6 +27,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2, Phone } from 'lucide-react';
+import { Separator } from './ui/separator';
 
 const formSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters.'),
@@ -82,7 +83,10 @@ export function ContactFormDialog({ propertyTitle, propertyId }: ContactFormDial
   const onSubmit = async (data: ContactFormValues) => {
     setIsSubmitting(true);
     try {
-      
+      // =================================================================
+      // IMPORTANT: Replace this URL with your own Formspree form endpoint
+      // Go to formspree.io to create a new form and get your URL.
+      // =================================================================
       const formspreeEndpoint = 'https://formspree.io/f/movrdvpv';
       
       const response = await fetch(formspreeEndpoint,  {
@@ -118,9 +122,8 @@ export function ContactFormDialog({ propertyTitle, propertyId }: ContactFormDial
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button size="sm" variant="default" className="mt-2">
-          <Phone className="mr-2 h-4 w-4" />
-          Inquire
+        <Button size="sm" variant="default" className="w-full">
+          Inquire Now
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">

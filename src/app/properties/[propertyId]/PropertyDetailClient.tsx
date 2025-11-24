@@ -82,7 +82,7 @@ export function PropertyDetailClient({ property }: { property: Property }) {
   const detailItems = [
     { icon: Bed, label: 'Bedrooms', value: property.bedrooms },
     { icon: Bath, label: 'Bathrooms', value: property.bathrooms },
-    { icon: Triangle, label: 'sqft', value: property.area.toLocaleString() },
+    { icon: Triangle, label: 'Area', value: property.area ? `${property.area.toLocaleString()} sqft` : undefined },
   ].filter(item => item.value);
 
   return (
@@ -131,11 +131,11 @@ export function PropertyDetailClient({ property }: { property: Property }) {
         {/* --- Image Gallery Section --- */}
         <Dialog>
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-2">
-            {/* Main Image */}
+              {/* Main Image */}
               <DialogTrigger asChild>
                   <div className="lg:col-span-2 relative h-64 md:h-[28rem] cursor-pointer group">
-                  {heroImage && <Image src={heroImage} alt={property.title} fill className="object-cover rounded-lg group-hover:opacity-90 transition-opacity" />}
-                  {!heroImage && <div className="w-full h-full bg-muted flex items-center justify-center text-muted-foreground rounded-lg">No Image</div>}
+                      {heroImage && <Image src={heroImage} alt={property.title} fill className="object-cover rounded-lg group-hover:opacity-90 transition-opacity" />}
+                      {!heroImage && <div className="w-full h-full bg-muted flex items-center justify-center text-muted-foreground rounded-lg">No Image</div>}
                   </div>
               </DialogTrigger>
             
@@ -196,6 +196,7 @@ export function PropertyDetailClient({ property }: { property: Property }) {
               </div>
             </div>
           </div>
+          
           {/* --- All Photos Dialog --- */}
           <DialogContent className="max-w-4xl p-0">
               <DialogHeader className="p-4 border-b">
@@ -220,22 +221,27 @@ export function PropertyDetailClient({ property }: { property: Property }) {
         {/* --- Details Section --- */}
         <div className="mt-8 grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2 space-y-8">
-              <Card>
-                <CardHeader><CardTitle className="font-headline text-2xl">Property Overview</CardTitle></CardHeader>
-                <CardContent className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
-                    {detailItems.map((item) => (
-                        <div key={item.label} className="p-4 rounded-lg bg-muted/50">
-                        <item.icon className="mx-auto h-7 w-7 text-primary" />
-                        <p className="mt-2 font-semibold text-lg">{item.value}</p>
-                        <p className="text-xs text-muted-foreground">{item.label}</p>
-                        </div>
+             <div className="border rounded-lg p-6">
+                <h2 className="font-headline text-2xl mb-4">Property Overview</h2>
+                <div className="flex flex-wrap items-center gap-x-8 gap-y-4">
+                    {detailItems.map((item, index) => (
+                        <React.Fragment key={item.label}>
+                            <div className="flex items-center gap-3">
+                                <item.icon className="h-6 w-6 text-primary" />
+                                <div>
+                                    <p className="text-xs text-muted-foreground">{item.label}</p>
+                                    <p className="font-semibold">{item.value}</p>
+                                </div>
+                            </div>
+                            {index < detailItems.length - 1 && <Separator orientation="vertical" className="h-8" />}
+                        </React.Fragment>
                     ))}
-                </CardContent>
-              </Card>
-
+                </div>
+              </div>
+              
               {property.isUnderConstruction && property.possessionDate && (
-                <div className="flex items-center gap-3 rounded-lg border bg-card p-4">
-                    <CalendarClock className="h-6 w-6 text-primary flex-shrink-0" />
+                 <div className="flex items-center gap-3 rounded-lg border p-4">
+                    <CalendarClock className="h-5 w-5 text-primary flex-shrink-0" />
                     <div className="flex flex-wrap items-baseline gap-x-2">
                         <h3 className="font-semibold text-base">Possession By:</h3>
                         <p className="text-muted-foreground">{property.possessionDate}</p>
@@ -249,19 +255,17 @@ export function PropertyDetailClient({ property }: { property: Property }) {
               </Card>
 
               {property.features && property.features.length > 0 && (
-                <Card>
-                  <CardHeader><CardTitle className="font-headline text-2xl">Features & Amenities</CardTitle></CardHeader>
-                  <CardContent>
-                    <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-4">
-                      {property.features.map((feature, index) => (
+                 <div className="border rounded-lg p-6">
+                    <h2 className="font-headline text-2xl mb-4">Features & Amenities</h2>
+                    <ul className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-3">
+                    {property.features.map((feature, index) => (
                         <li key={index} className="flex items-center gap-3">
-                          <CheckCircle className="h-5 w-5 text-primary flex-shrink-0" />
-                          <span className="text-foreground/90">{feature}</span>
+                        <CheckCircle className="h-5 w-5 text-primary flex-shrink-0" />
+                        <span className="text-foreground/90">{feature}</span>
                         </li>
-                      ))}
+                    ))}
                     </ul>
-                  </CardContent>
-                </Card>
+                </div>
               )}
           </div>
         </div>

@@ -89,31 +89,28 @@ export default function HomePage() {
     <div className="flex flex-col min-h-screen bg-muted/20">
       <Header />
       {/* Hero Section */}
-      <section className="relative bg-black">
-        <div className='relative h-[60vh] sm:h-[55vh] flex items-center justify-center'>
-            <Image
-              src={heroImage.imageUrl}
-              alt={heroImage.description}
-              fill
-              className="object-cover object-center"
-              priority
-              data-ai-hint={heroImage.imageHint}
-            />
-            <div className="absolute inset-0 bg-black/60 z-10" />
-
-            <div className='relative z-20 container text-white text-center md:text-right'>
-                <div className='max-w-2xl md:ml-auto space-y-4'>
-                    <h1 className="text-3xl md:text-5xl font-bold tracking-tight text-white drop-shadow-md">
-                      Discover your <span className='text-amber-400'>Dream Space</span>
-                    </h1>
-                    <p className="text-lg text-neutral-200 drop-shadow-sm font-normal hidden md:block">
-                        Professional expertise with personalized consultations. Book an appointment with our expert or explore properties tailored to your needs.
-                    </p>
-                     <p className="text-base text-neutral-200 drop-shadow-sm font-normal md:hidden">
-                        Expert consultations & premium properties.
-                    </p>
-                </div>
+      <section className="relative">
+         <div 
+          className='relative h-[60vh] sm:h-[65vh] flex items-center justify-center bg-cover bg-center bg-fixed'
+          style={{ backgroundImage: `url(${heroImage.imageUrl})` }}
+        >
+          <div className="absolute inset-0 bg-black/60 z-10" />
+          <div 
+            className='relative z-20 container text-white text-center md:text-right'
+            data-ai-hint={heroImage.imageHint}
+          >
+            <div className='max-w-2xl md:ml-auto space-y-4'>
+              <h1 className="text-3xl md:text-5xl font-bold tracking-tight text-white drop-shadow-md">
+                Discover your <span className='text-amber-400'>Dream Space</span>
+              </h1>
+              <p className="text-lg text-neutral-200 drop-shadow-sm font-normal hidden md:block">
+                Professional expertise with personalized consultations. Book an appointment with our expert or explore properties tailored to your needs.
+              </p>
+              <p className="text-base text-neutral-200 drop-shadow-sm font-normal md:hidden">
+                Expert consultations & premium properties.
+              </p>
             </div>
+          </div>
         </div>
 
         <div className="relative z-30 -mt-16 md:-mt-20 container">
@@ -179,7 +176,7 @@ export default function HomePage() {
           <section id="why-choose-us" className="pt-16 sm:pt-20 bg-background">
             <div className="container">
                 <div className="text-center max-w-3xl mx-auto">
-                    <h1 className="text-3xl md:text-4xl font-bold">
+                    <h1 className="text-3xl md:text-4xl font-semibold">
                        Your Success Is <span className="text-primary">Our Priority</span>
                     </h1>
                     <p className="mt-4 text-lg text-muted-foreground">
@@ -236,7 +233,7 @@ export default function HomePage() {
           <section id="why-paid" className="py-16 sm:py-24 bg-secondary/30">
             <div className="container">
                 <div className="text-center max-w-4xl mx-auto">
-                    <h1 className="text-3xl md:text-4xl font-bold">
+                    <h1 className="text-3xl md:text-4xl font-semibold">
                         Benefits of a {' '}
                         <span className="text-primary">
                             Professional Consultation
@@ -363,7 +360,7 @@ export default function HomePage() {
           <section className="py-16 sm:py-24 bg-background">
             <div className="container">
               <div className="text-center">
-                <h1 className="text-3xl md:text-4xl font-bold">
+                <h1 className="text-3xl md:text-4xl font-semibold">
                     Comprehensive Real Estate{' '}
                     <span className="text-primary">
                         Solutions
